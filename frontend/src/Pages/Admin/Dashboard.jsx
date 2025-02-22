@@ -31,104 +31,78 @@ import {
   MoreVertical,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function AdminDashboard() {
-  const stats = [
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    totalActiveCourse: 0,
+    totalRevenue: 0,
+  });
+  
+  const token = sessionStorage.getItem(`token`);
+  const [recentCourses, setRecentCourses] = useState([]);
+  const [recentEnrollments, setRecentEnrollments] = useState([]);
+
+  const statsCards = [
     {
       title: "Total Students",
-      value: "24,571",
-      change: "+12%",
+      value: stats.totalStudents,
       icon: Users,
+      change: "+12%",
     },
     {
       title: "Active Courses",
-      value: "192",
-      change: "+4%",
+      value: stats.totalActiveCourse,
       icon: BookOpen,
+      change: "+8%",
     },
     {
-      title: "Revenue",
-      value: "$82,294",
-      change: "+18%",
+      title: "Total Revenue",
+      value: `$${stats.totalRevenue}`,
       icon: DollarSign,
+      change: "+23%",
     },
     {
-      title: "Course Completion",
-      value: "87%",
-      change: "+2%",
+      title: "Growth Rate",
+      value: "18%",
       icon: TrendingUp,
+      change: "+4%",
     },
   ];
 
-  const recentCourses = [
-    {
-      id: 1,
-      title: "Advanced Web Development",
-      instructor: "Sarah Johnson",
-      students: 234,
-      revenue: 4500,
-      status: "Active",
-    },
-    {
-      id: 2,
-      title: "UI/UX Design Fundamentals",
-      instructor: "Michael Chen",
-      students: 189,
-      revenue: 3200,
-      status: "Draft",
-    },
-    {
-      id: 3,
-      title: "Python for Data Science",
-      instructor: "Emily Williams",
-      students: 312,
-      revenue: 6100,
-      status: "Active",
-    },
-    {
-      id: 4,
-      title: "Digital Marketing 101",
-      instructor: "Alex Turner",
-      students: 156,
-      revenue: 2800,
-      status: "Review",
-    },
-  ];
+  const getData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/admin/dashboard`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  const recentEnrollments = [
-    {
-      id: 1,
-      student: "John Cooper",
-      course: "Advanced Web Development",
-      date: "2024-02-20",
-      amount: 89.99,
-      status: "Completed",
-    },
-    {
-      id: 2,
-      student: "Emma Watson",
-      course: "UI/UX Design Fundamentals",
-      date: "2024-02-19",
-      amount: 69.99,
-      status: "In Progress",
-    },
-    {
-      id: 3,
-      student: "Michael Scott",
-      course: "Python for Data Science",
-      date: "2024-02-19",
-      amount: 94.99,
-      status: "In Progress",
-    },
-    {
-      id: 4,
-      student: "Sarah Miller",
-      course: "Digital Marketing 101",
-      date: "2024-02-18",
-      amount: 79.99,
-      status: "Completed",
-    },
-  ];
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setStats({
+          totalStudents: data.totalStudents,
+          totalActiveCourse: data.activeCourses,
+          totalRevenue: data.totalRevenue,
+        });
+        setRecentCourses(data.recentCourses);
+        setRecentEnrollments(data.recentEnrollments);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-[#FFFBF5]">
@@ -147,8 +121,8 @@ export default function AdminDashboard() {
 
         {/* Stats Grid */}
         <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat, index) => (
-            <Card key={index}>
+          {statsCards.map((stat) => (
+            <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-slate-600">
                   {stat.title}
@@ -167,9 +141,9 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className=" grid gap-6 lg:grid-cols-2">
           {/* Recent Courses */}
-          <Card>
+          <Card className="w-[95vw]">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
@@ -198,36 +172,19 @@ export default function AdminDashboard() {
                     <TableHead>Course</TableHead>
                     <TableHead>Students</TableHead>
                     <TableHead>Revenue</TableHead>
-                    <TableHead>Status</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentCourses.map((course) => (
-                    <TableRow key={course.id}>
+                    <TableRow key={course.courseName}>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{course.title}</div>
-                          <div className="text-sm text-slate-500">
-                            {course.instructor}
-                          </div>
+                          <div className="font-medium">{course.courseName}</div>
                         </div>
                       </TableCell>
-                      <TableCell>{course.students}</TableCell>
-                      <TableCell>${course.revenue}</TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            course.status === "Active"
-                              ? "bg-green-100 text-green-600"
-                              : course.status === "Draft"
-                              ? "bg-slate-100 text-slate-600"
-                              : "bg-orange-100 text-orange-600"
-                          }
-                        >
-                          {course.status}
-                        </Badge>
-                      </TableCell>
+                      <TableCell>{course.studentCount}</TableCell>
+                      <TableCell>Rs {course.courseRevenue}</TableCell>
                       <TableCell>
                         <Button variant="ghost" size="icon">
                           <MoreVertical className="h-4 w-4" />
@@ -240,56 +197,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          {/* Recent Enrollments */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Recent Enrollments</CardTitle>
-                  <CardDescription>Latest student enrollments</CardDescription>
-                </div>
-                <Button variant="outline" size="sm">
-                  View All
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Student</TableHead>
-                    <TableHead>Course</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentEnrollments.map((enrollment) => (
-                    <TableRow key={enrollment.id}>
-                      <TableCell className="font-medium">
-                        {enrollment.student}
-                      </TableCell>
-                      <TableCell className="max-w-[200px] truncate">
-                        {enrollment.course}
-                      </TableCell>
-                      <TableCell>${enrollment.amount}</TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            enrollment.status === "Completed"
-                              ? "bg-green-100 text-green-600"
-                              : "bg-blue-100 text-blue-600"
-                          }
-                        >
-                          {enrollment.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+
         </div>
       </main>
     </div>
