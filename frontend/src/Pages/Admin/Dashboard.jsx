@@ -1,7 +1,4 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -30,15 +27,8 @@ import {
   BookOpen,
   DollarSign,
   TrendingUp,
-  Search,
   Plus,
   MoreVertical,
-  GraduationCap,
-  LayoutDashboard,
-  Settings,
-  BookOpenCheck,
-  MessageSquare,
-  BarChart,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
