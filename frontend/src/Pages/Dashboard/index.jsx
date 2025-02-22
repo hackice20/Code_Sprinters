@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Clock, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import CourseCard from "@/components/Course/CourseCard";
+import React, { useEffect, useState, Suspense } from "react";
+
+const CourseCard = React.lazy(() => import("@/components/Course/CourseCard"))
 
 export default function DashboardPage() {
   const [recommendedCourses, setRecommendedCourses] = useState([]); // All courses from the database
@@ -131,15 +132,17 @@ export default function DashboardPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {recommendedCourses.map((course) => (
               <Link to={`/course/${course?._id}`}>
-                <CourseCard
-                  key={course?._id}
-                  id={course?._id}
-                  title={course?.title}
-                  description={course?.description}
-                  thumbnail={course?.thumbnail}
-                  rating={course?.rating}
-                  price={course?.price}
-                />
+                <Suspense fallback={<p>This is loading</p>}>
+                  <CourseCard
+                    key={course?._id}
+                    id={course?._id}
+                    title={course?.title}
+                    description={course?.description}
+                    thumbnail={course?.thumbnail}
+                    rating={course?.rating}
+                    price={course?.price}
+                  />
+                </Suspense>
               </Link>
             ))}
           </div>

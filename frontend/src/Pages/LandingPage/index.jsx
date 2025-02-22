@@ -1,14 +1,22 @@
-import Features from "@/components/Landing/Features";
-import Hero from "@/components/Landing/Hero";
-import Testimonials from "@/components/Landing/Testimonials";
-import React from "react";
+import React, { Suspense } from "react";
 
+const Hero = React.lazy(() => import("@/components/Landing/Hero"));
+const Testimonials = React.lazy(() =>
+  import("@/components/Landing/Testimonials")
+);
+const Features = React.lazy(() => import("@/components/Landing/Features"));
 const LandingPage = () => {
   return (
     <>
-      <Hero />
-      <Features />
-      <Testimonials />
+      <Suspense fallback={<p>This is Loading</p>}>
+        <Hero />
+      </Suspense>
+      <Suspense fallback={<p>This is Loading</p>}>
+        <Features />
+      </Suspense>
+      <Suspense fallback={<p>This is Loading</p>}>
+        <Testimonials />
+      </Suspense>
     </>
   );
 };

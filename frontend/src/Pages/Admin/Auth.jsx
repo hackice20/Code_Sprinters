@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Login from "@/components/Admin/auth/login";
-import Register from "@/components/Admin/auth/register";
 
+const Login = React.lazy(() => import("@/components/Admin/auth/login"));
+const Register = React.lazy(() => import("@/components/Admin/auth/register"));
 const Auth = () => {
   const [tab, setTab] = useState("login");
 
@@ -29,10 +29,14 @@ const Auth = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="login" className="bg-white p-5 rounded-md">
-          <Login setTab={setTab}/>
+          <Suspense fallback={<p>This is Loading</p>}>
+            <Login setTab={setTab} />
+          </Suspense>
         </TabsContent>
         <TabsContent value="register" className="bg-white p-5 rounded-md">
-          <Register setTab={setTab}/>
+          <Suspense fallback={<p>This is Loading</p>}>
+            <Register setTab={setTab} />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </div>

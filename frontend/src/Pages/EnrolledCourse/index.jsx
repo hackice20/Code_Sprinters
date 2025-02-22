@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, Clock, Search, Star, PlayCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import CourseCard from "@/components/Course/CourseCard";
 
 export default function EnrolledCourses() {
   const [recommendedCourses, setRecommendedCourses] = useState([]);
@@ -60,7 +59,7 @@ export default function EnrolledCourses() {
                 <div className="group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-md">
                   <div className="aspect-video overflow-hidden">
                     <img
-                      src={course?.image || "/placeholder.svg"}
+                      src={course?.thumbnail}
                       alt={course?.title}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />

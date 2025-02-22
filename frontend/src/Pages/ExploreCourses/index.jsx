@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import CourseCard from "@/components/Course/CourseCard";
 import { Link } from "react-router-dom";
+
+const CourseCard = React.lazy(() => import("@/components/Course/CourseCard"));
 
 export default function ExploreCourses() {
   const [recommendedCourses, setRecommendedCourses] = useState([]);
@@ -59,14 +60,16 @@ export default function ExploreCourses() {
             <div className="flex flex-row flex-wrap gap-6 justify-center">
               {recommendedCourses.map((course) => (
                 <Link to={`/course/${course._id}`} key={course._id}>
-                  <CourseCard
-                    id={course._id}
-                    title={course.title}
-                    description={course.description}
-                    thumbnail={course.thumbnail}
-                    rating={course.rating}
-                    price={course.price}
-                  />
+                  <Suspense fallback={<p>Loading...</p>}>
+                    <CourseCard
+                      id={course._id}
+                      title={course.title}
+                      description={course.description}
+                      thumbnail={course.thumbnail}
+                      rating={course.rating}
+                      price={course.price}
+                    />{" "}
+                  </Suspense>
                 </Link>
               ))}
             </div>
