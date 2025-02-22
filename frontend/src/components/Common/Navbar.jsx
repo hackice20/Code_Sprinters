@@ -48,7 +48,7 @@ const Navbar = () => {
             ) : null}
             {user ? (
               <Link
-                href="/"
+                to="/enrolledCourses"
                 className="text-slate-600 hover:text-purple-600 transition-colors"
               >
                 My Course
