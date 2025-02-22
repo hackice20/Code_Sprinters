@@ -29,9 +29,8 @@ const Login = ({ setTab }) => {
         },
         body: JSON.stringify(user),
       });
-
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         sessionStorage.setItem("token", data.token);
         setUser({
           email: "",

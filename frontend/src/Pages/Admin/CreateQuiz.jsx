@@ -62,7 +62,7 @@ const CreateQuiz = () => {
 
       if (response.ok) {
         alert('Quiz created successfully!');
-        router('/admin/quizzes');
+        router('/admin/dashboard');
       } else {
         const errorData = await response.json();
         alert(`Failed to create quiz: ${errorData.message}`);

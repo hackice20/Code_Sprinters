@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CourseCard from "@/components/Course/CourseCard";
 
-export default function DashboardPage() {
+export default function EnrolledCourses() {
   const [recommendedCourses, setRecommendedCourses] = useState([]);
   const navigate = useNavigate();
   const token = sessionStorage.getItem("token");
@@ -36,24 +36,6 @@ export default function DashboardPage() {
   useEffect(() => {
     getUser();
   }, [token]);
-
-  const fetchRecommendedCourses = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/api/courses");
-
-      if (!response.ok) {
-        throw new Error("Server error");
-      }
-      const data = await response.json();
-      setRecommendedCourses(data);
-    } catch (error) {
-      console.error("Error fetching recommended courses:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRecommendedCourses();
-  }, []);
 
   return (
     <div className="flex min-h-screen bg-[#FFFBF5]">
@@ -122,24 +104,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Recommended Courses */}
-        <section>
-          <h2 className="mb-6 text-xl font-semibold text-slate-800">
-            Recommended Courses
-          </h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {recommendedCourses.slice(0, 3).map((course) => (
-              <CourseCard
-                key={course?._id}
-                id={course?._id}
-                title={course?.title}
-                instructor={course?.instructor}
-                rating={course?.rating}
-                price={course?.price}
-              />
-            ))}
-          </div>
-        </section>
       </main>
     </div>
   );

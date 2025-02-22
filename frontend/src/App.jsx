@@ -16,6 +16,7 @@ import AdminAuth from "./Pages/Admin/Auth";
 import CreateQuiz from "./Pages/Admin/CreateQuiz";
 import ProtectedRoute from "./components/Common/ProtectedRoutes";
 import QuizApp from "./Pages/Quiz/TakeQuiz";
+import EnrolledCourses from "./Pages/EnrolledCourse";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
             <Route path="/certificate" element={<Certificate />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/exploreCourses" element={<ExploreCourses />} />
+            <Route path="/enrolledCourses" element={<EnrolledCourses />} />
             <Route path="/course/:id" element={<CoursePage />} />
             <Route path="/learn/:id" element={<CourseLearningPage />} />
             <Route path="/admin/auth" element={<AdminAuth />} />
