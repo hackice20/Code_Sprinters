@@ -26,7 +26,7 @@ export default function DashboardPage() {
         console.log(data);
 
         setEnrollCourses(data.user.enrolledCourses);
-        console.log(data.user.enrolledCourses); // Should not be undefined now
+        console.log(data.user.enrolledCourses); 
       }
     } catch (error) {
       console.log(error);
