@@ -35,10 +35,9 @@ export default function CreateCoursePage() {
     const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
     const ALLOWED_TYPES = [
       "video/mp4",
-      "video/mkv",
       "video/quicktime",
       "video/x-msvideo",
-      "video/x-matroska"
+      "video/x-matroska",
     ];
 
     if (!ALLOWED_TYPES.includes(file.type)) {
@@ -57,7 +56,7 @@ export default function CreateCoursePage() {
       const fileError = validateFile(file);
       if (fileError) {
         setError(fileError);
-        event.target.value = ""; 
+        event.target.value = ""; // Clear the file input
         return;
       }
       setVideoFile(file);
