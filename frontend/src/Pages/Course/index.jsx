@@ -1,43 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Star,
-  Clock,
-  Award,
-  Globe,
-  BookOpen,
-  Users,
-  PlayCircle,
-  CheckCircle,
-  BarChart,
-  Flame,
-  ShieldCheck,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Star } from "lucide-react";
 
 export default function CoursePage() {
-  const [selectedTab, setSelectedTab] = useState("curriculum");
   const { id } = useParams();
-  const [course, setCourseDetails] = useState([]);
+  const [course, setCourseDetails] = useState(null);
   const token = sessionStorage.getItem("token");
   const navigate = useNavigate();
 
-  const getcourse = async () => {
+  const getCourse = async () => {
     try {
       const response = await fetch(`http://localhost:3000/api/courses/${id}`);
       if (!response.ok) {
         throw new Error("Server error");
       }
       const data = await response.json();
-      console.log(data);
       setCourseDetails(data);
     } catch (error) {
       console.error("Error fetching course details:", error);
@@ -58,7 +36,7 @@ export default function CoursePage() {
       const data = await response.json();
       if (response.ok) {
         console.log("Purchase successful:", data);
-        navigate(`/dashboard`)
+        navigate(`/learn/${course._id}`)
       } else {
         console.error("Purchase failed:", data.message);
       }
@@ -66,75 +44,105 @@ export default function CoursePage() {
       console.error("Error during purchase:", error);
     }
   };
-  
 
   useEffect(() => {
-    getcourse();
-  }, []);
+    getCourse();
+  }, [id]);
+
+  if (!course) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="min-h-[70vh] bg-[#FFFBF5] ">
+    <div className="min-h-[70vh] bg-[#FFFBF5]">
       {/* Course Header */}
       <div className="border-b bg-white">
         <div className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold text-slate-800">{course.title}</h1>
-          <p className="text-lg text-slate-600">{course.subtitle}</p>
-          <div className="flex flex-wrap gap-4 text-sm">
-            <div className="flex items-center gap-1">
-              <span className="font-bold text-orange-500">{course.rating}</span>
-              <div className="flex">
-                {Array(5)
-                  .fill(null)
-                  .map((_, i) => (
-                    <Star
-                      key={i}
-                      className="h-4 w-4 fill-orange-400 text-orange-400"
-                    />
-                  ))}
+        </div>
+      </div>
+
+      {/* Course Details */}
+      <div className="container mx-auto px-4 py-8">
+        {/* 3-Column Layout */}
+        <div className="grid grid-cols-3 gap-8">
+          {/* First Column - Thumbnail Image */}
+          <div className="col-span-1">
+            <img
+              src={course.thumbnail}
+              alt={course.title}
+              className="w-full h-64 object-cover rounded-md"
+            />
+          </div>
+
+          {/* Second and Third Columns - Key-Value Pairs */}
+          <div className="col-span-2">
+            <div className="space-y-4">
+              {/* Title */}
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-slate-800">Title</h2>
+                <p className="text-lg text-slate-600">{course.title}</p>
               </div>
-              {/* <span className="text-slate-600">({course.reviews.toLocaleString()} reviews)</span> */}
-            </div>
-            <div className="flex items-center gap-1 text-slate-600">
-              <Users className="h-4 w-4" />
-              {/* {course.students.toLocaleString()} students */}
-            </div>
-            <div className="flex items-center gap-1 text-slate-600">
-              <Clock className="h-4 w-4" />
-              Last updated {course.lastUpdated}
-            </div>
-            <div className="flex items-center gap-1 text-slate-600">
-              <Globe className="h-4 w-4" />
-              {course.language}
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="w-full p-10 flex flex-col gap-5">
-        <div className="flex gap-10">
-          <img
-            src="https://res.cloudinary.com/drn8ou2tw/image/upload/v1739958471/Code_With_Harry_-_Sigma_Batch_ai0aem.jpg"
-            alt=""
-            className="rounded-md"
-          />
-          <div>
-            <p className="text-3xl font-bold ">Author name</p>
-            <p className="text-lg">Author description</p>
-            <p className="text-lg">Course description</p>            
-          </div>
-        </div>
-        <div className="  p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-2xl font-bold text-slate-800">${course.price || "99"}</span>
-            <span className="ml-2 text-slate-500 line-through">${course.originalPrice || "109"}</span>
-          </div>
-          <Button onClick={handleBuyNow} className="bg-purple-600 hover:bg-purple-700">Buy now</Button>
-        </div>
-      </div>
-      </div>
+              {/* Description */}
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-slate-800">Description</h2>
+                <p className="text-lg text-slate-600">{course.description}</p>
+              </div>
 
-      {/* Purchase Section */}
+              {/* Price */}
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-slate-800">Price</h2>
+                <p className="text-lg text-slate-600">₹{course.price.toLocaleString()}</p>
+              </div>
+
+              {/* Instructor */}
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-slate-800">Instructor</h2>
+                <p className="text-lg text-slate-600">{course.instructor}</p>
+              </div>
+
+              {/* Bought By Count */}
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-slate-800">Bought By</h2>
+                <p className="text-lg text-slate-600">{course.boughtBy.length} students</p>
+              </div>
+
+              {/* Reviews */}
+              <div className="flex flex-col">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-slate-800">Reviews</h2>
+                  {course.reviews.length === 0 ? (
+                    <p className="text-lg text-slate-600">No reviews yet.</p>
+                  ) : null}
+                </div>
+                {course.reviews.length > 0 && (
+                  <div className="space-y-4 mt-4">
+                    {course.reviews.map((review, index) => (
+                      <div key={index} className="bg-white p-4 rounded-lg shadow-sm">
+                        <p className="text-sm text-slate-600">
+                          {review.review} <br />
+                          <span className="text-slate-500">by :{review.user.username}</span>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Buy Now Button at Bottom */}
+        <div className="mt-8 flex justify-center">
+          <Button
+            onClick={handleBuyNow}
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+          >
+            Buy Now
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -64,37 +64,6 @@ const CourseContent = ({ form }) => {
             </FormItem>
           )}
         />
-
-<FormField
-  control={form.control}
-  name="category"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Category</FormLabel>
-      <Select
-        onValueChange={field.onChange}
-        value={field.value || ""}
-        defaultValue={field.value || "development"}
-      >
-        <FormControl>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a category" />
-          </SelectTrigger>
-        </FormControl>
-        <SelectContent>
-          <SelectItem value="development">Development</SelectItem>
-          <SelectItem value="business">Business</SelectItem>
-          <SelectItem value="design">Design</SelectItem>
-          <SelectItem value="marketing">Marketing</SelectItem>
-          <SelectItem value="music">Music</SelectItem>
-        </SelectContent>
-      </Select>
-      <FormDescription>Choose the most relevant category</FormDescription>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
       </CardContent>
     </Card>
   );

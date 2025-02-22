@@ -15,7 +15,7 @@ export default function ExploreCourses() {
         throw new Error("Server error");
       }
       const data = await response.json();
-      console.log(data);
+
       setRecommendedCourses(data);
     } catch (error) {
       console.error("Error fetching recommended courses:", error);
@@ -58,15 +58,15 @@ export default function ExploreCourses() {
             {/* Course Grid */}
             <div className="flex flex-row flex-wrap gap-6 justify-center">
               {recommendedCourses.map((course) => (
-                <Link to={`/course/${course._id}`}>
-                <CourseCard
-                  key={course._id}
-                  id={course._id}
-                  title={course.title}
-                  instructor={course.instructor}
-                  rating={course.rating}
-                  price={course.price}
-                />
+                <Link to={`/course/${course._id}`} key={course._id}>
+                  <CourseCard
+                    id={course._id}
+                    title={course.title}
+                    description={course.description}
+                    thumbnail={course.thumbnail}
+                    rating={course.rating}
+                    price={course.price}
+                  />
                 </Link>
               ))}
             </div>

@@ -1,16 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookOpen, Clock, Search, Star, PlayCircle } from "lucide-react";
+import { Clock, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CourseCard from "@/components/Course/CourseCard";
 
 export default function DashboardPage() {
-  const [recommendedCourses, setRecommendedCourses] = useState([]);
+  const [recommendedCourses, setRecommendedCourses] = useState([]); // All courses from the database
+  const [enrolledCourses, setEnrolledCourses] = useState([]); // Courses enrolled by the user
   const navigate = useNavigate();
   const token = sessionStorage.getItem("token");
-  const [enrollCourses, setEnrollCourses] = useState([]);
 
+  // Fetch user details and enrolled courses
   const getUser = async () => {
     try {
       const response = await fetch(`http://localhost:3000/api/auth/getUser`, {
@@ -23,20 +24,14 @@ export default function DashboardPage() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-
-        setEnrollCourses(data.user.enrolledCourses);
-        console.log(data.user.enrolledCourses); 
+        setEnrolledCourses(data.user.enrolledCourses || []); // Set enrolled courses
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching user details:", error);
     }
   };
 
-  useEffect(() => {
-    getUser();
-  }, [token]);
-
+  // Fetch all courses from the database
   const fetchRecommendedCourses = async () => {
     try {
       const response = await fetch("http://localhost:3000/api/courses");
@@ -45,15 +40,16 @@ export default function DashboardPage() {
         throw new Error("Server error");
       }
       const data = await response.json();
-      setRecommendedCourses(data);
+      setRecommendedCourses(data); // Set all courses
     } catch (error) {
       console.error("Error fetching recommended courses:", error);
     }
   };
 
   useEffect(() => {
-    fetchRecommendedCourses();
-  }, []);
+    getUser(); // Fetch user details and enrolled courses
+    fetchRecommendedCourses(); // Fetch all courses
+  }, [token]);
 
   return (
     <div className="flex min-h-screen bg-[#FFFBF5]">
@@ -72,71 +68,79 @@ export default function DashboardPage() {
           <h2 className="mb-6 text-xl font-semibold text-slate-800">
             Enrolled Courses
           </h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {enrollCourses?.map((course) => (
-              <Link to={`/learn/${course?._id}`} key={course?._id}>
-                <div className="group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-md">
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={course?.image || "/placeholder.svg"}
-                      alt={course?.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="mb-1 font-semibold text-slate-800">
-                      {course?.title}
-                    </h3>
-                    <p className="mb-3 text-sm text-slate-600">
-                      {course?.instructor}
-                    </p>
-                    <div className="mb-3">
-                      <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="text-slate-600">
-                          {course?.completedLessons} of {course?.totalLessons}{" "}
-                          lessons
-                        </span>
-                        <span className="font-medium text-purple-600">
-                          {course?.progress}%
-                        </span>
+          {enrolledCourses.length === 0 ? (
+            <p className="text-slate-600">
+              You are not enrolled in any courses yet.
+            </p>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {enrolledCourses.map((course) => (
+                <Link to={`/learn/${course?._id}`} key={course?._id}>
+                  <div className="group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-md">
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={course?.thumbnail || "/placeholder.svg"}
+                        alt={course?.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="mb-1 font-semibold text-slate-800">
+                        {course?.title}
+                      </h3>
+                      <p className="mb-3 text-sm text-slate-600">
+                        {course?.instructor}
+                      </p>
+                      <div className="mb-3">
+                        <div className="mb-2 flex items-center justify-between text-sm">
+                          <span className="text-slate-600">
+                            {course?.completedLessons || 0} of{" "}
+                            {course?.totalLessons || 0} lessons
+                          </span>
+                          <span className="font-medium text-purple-600">
+                            {course?.progress || 0}%
+                          </span>
+                        </div>
                       </div>
-                      {/* <Progress value={course?.progress} className="h-2" /> */}
-                    </div>
-                    <div className="flex items-center justify-between text-sm text-slate-500">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        Last accessed {course?.lastAccessed}
-                      </span>
-                      <Button
-                        size="sm"
-                        className="bg-purple-600 hover:bg-purple-700"
-                        onClick={() => navigate(`/course/${course?.id}`)}
-                      >
-                        Continue
-                      </Button>
+                      <div className="flex items-center justify-between text-sm text-slate-500">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-4 w-4" />
+                          Last accessed {course?.lastAccessed || "Never"}
+                        </span>
+                        <Button
+                          size="sm"
+                          className="bg-purple-600 hover:bg-purple-700"
+                          onClick={() => navigate(`/course/${course?._id}`)}
+                        >
+                          Continue
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
 
-        {/* Recommended Courses */}
+        {/* Recommended Courses (All Courses from DB) */}
         <section>
           <h2 className="mb-6 text-xl font-semibold text-slate-800">
             Recommended Courses
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {recommendedCourses.slice(0, 3).map((course) => (
-              <CourseCard
-                key={course?._id}
-                id={course?._id}
-                title={course?.title}
-                instructor={course?.instructor}
-                rating={course?.rating}
-                price={course?.price}
-              />
+            {recommendedCourses.map((course) => (
+              <Link to={`/course/${course?._id}`}>
+                <CourseCard
+                  key={course?._id}
+                  id={course?._id}
+                  title={course?.title}
+                  description={course?.description}
+                  thumbnail={course?.thumbnail}
+                  rating={course?.rating}
+                  price={course?.price}
+                />
+              </Link>
             ))}
           </div>
         </section>

@@ -11,7 +11,7 @@ const courseSchema = new mongoose.Schema(
     rating : {type : Number, default : 0},
     price : {type : Number, default : 0, required : true},
     thumbnail : {type : String},
-    instructor : {type : mongoose.Schema.Types.ObjectId, ref : "Admin", required : true},
+    instructor : {type: String},
     boughtBy : [{type : mongoose.Schema.Types.ObjectId, ref : "User"}],
     ratings: [
       {
