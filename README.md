@@ -217,9 +217,3 @@ Here's an **API guide** table based on the routes you've provided. This will all
 localhost:3000/api/leaderboard/<courseId>
 
 ---
-
-## API KEY
-
-GEMINI_API_KEY = AIzaSyC1ZLy_olVsr-ItHdv5nSdM7K4ewbO-zYQ
-
----
