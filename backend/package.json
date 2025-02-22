@@ -11,6 +11,7 @@
   "author": "yashs",
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
     "axios": "^1.7.9",
     "bcryptjs": "^3.0.1",
     "cloudinary": "^2.5.1",

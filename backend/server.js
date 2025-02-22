@@ -40,7 +40,6 @@ app.use('/api/quiz', quizRoutes);
 app.use('/api/certificate', certificateRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/chatbot', chatbotRoutes);
-
 // 404 Handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
