@@ -9,8 +9,8 @@ const Login = ({ setTab }) => {
     email: "",
     password: "",
   });
-  
-  const navigate = useNavigate();
+
+  const navigation = useNavigate();
 
   const handleChange = (e) => {
     setUser({
@@ -32,11 +32,14 @@ const Login = ({ setTab }) => {
       const data = await response.json();
       if (response.ok) {
         sessionStorage.setItem("token", data.token);
+
         setUser({
           email: "",
           password: "",
-        })
-        navigate("/admin/dashboard");
+        });
+        window.location.reload();
+        navigation('/admin/dashboard')
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error:", error);
