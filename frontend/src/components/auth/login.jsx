@@ -38,6 +38,7 @@ const Login = ({ setTab }) => {
           password: "",
         })
         navigate("/dashboard");
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error:", error);
