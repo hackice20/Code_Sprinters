@@ -1,0 +1,18 @@
+[
+  {
+    "userId": "67b5bd9f068f82329f624383",
+    "quizId": "67b57339ad90ddf2ba977602",
+    "score": 100,
+    "timeTaken": 290,
+    "passed": true,
+    "date": "2025-02-19T11:18:27.515Z"
+  },
+  {
+    "userId": "67b5be529f96b610c5b46a9c",
+    "quizId": "67b57339ad90ddf2ba977602",
+    "score": 100,
+    "timeTaken": 289,
+    "passed": true,
+    "date": "2025-02-19T11:20:48.914Z"
+  }
+]
