@@ -3,8 +3,12 @@ import Course from '../models/Course.js';
 import Admin from '../models/Admin.js';
 import cloudinary from '../config/cloudinaryConfig.js';
 import { Readable } from 'stream';
+<<<<<<< HEAD
 import User from "../models/User.js";
 // Connect to Redis server
+=======
+import User from '../models/User.js';
+>>>>>>> cb349cf927bfa677b89e8e94dee8a0bf62326427
 
 const bufferToStream = (buffer) => {
   return Readable.from(buffer);
@@ -69,14 +73,15 @@ export const createCourse = async (req, res) => {
   }
 };
 
-
-
-
 export const getCourses = async (req, res) => {
   try {
+<<<<<<< HEAD
     // Fetch from MongoDB directly
     const courses = await Course.find({});
     console.log("📡 Serving from Database");
+=======
+    const courses = await Course.find({});
+>>>>>>> cb349cf927bfa677b89e8e94dee8a0bf62326427
     res.json(courses);
   } catch (err) {
     console.error(err);
@@ -84,15 +89,19 @@ export const getCourses = async (req, res) => {
   }
 };
 
-
-// Public: Get course details by ID
 export const getCourseById = async (req, res) => {
   try {
+<<<<<<< HEAD
     const { id } = req.params;
     console.log(`Fetching course ${id} from DB`);
     const course = await Course.findById(id);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
+=======
+    const courseId = req.params.id || req.body;
+    const course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).json({ message: "Course not found" });
+>>>>>>> cb349cf927bfa677b89e8e94dee8a0bf62326427
     res.json(course);
   } catch (err) {
     console.error(err);
@@ -100,9 +109,12 @@ export const getCourseById = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 
 
 // Admin: Update a course
+=======
+>>>>>>> cb349cf927bfa677b89e8e94dee8a0bf62326427
 export const updateCourse = async (req, res) => {
   try {
     const updateData = { ...req.body };
@@ -293,11 +305,27 @@ export const giveReview = async (req, res) => {
 export const getCoursesByUser = async (req, res) => {
   try {
     const userId = req.user.id;
+<<<<<<< HEAD
     console.log(`Fetching courses for user ${userId} from DB`);
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User Not Found" });
 
     res.json({ courses: user.enrolledCourses });
+=======
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const user = await User.findById(userId).populate("enrolledCourses");
+
+    if (!user) {
+      return res.status(404).json({ message: "User Not Found" });
+    }
+
+    return res.status(200).json({
+      courses: user.enrolledCourses || [],
+    });
+>>>>>>> cb349cf927bfa677b89e8e94dee8a0bf62326427
   } catch (error) {
     console.error("Error fetching user's courses:", error);
     res.status(500).json({ message: error.message });
