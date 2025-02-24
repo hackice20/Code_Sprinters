@@ -3,11 +3,8 @@ import Course from '../models/Course.js';
 import Admin from '../models/Admin.js';
 import cloudinary from '../config/cloudinaryConfig.js';
 import { Readable } from 'stream';
-
-import redis from 'redis';
-const redisClient = redis.createClient();
-
-redisClient.connect().catch(console.error); // Connect to Redis server
+import User from "../models/User.js";
+// Connect to Redis server
 
 const bufferToStream = (buffer) => {
   return Readable.from(buffer);
@@ -77,21 +74,8 @@ export const createCourse = async (req, res) => {
 
 export const getCourses = async (req, res) => {
   try {
-    const cacheKey = 'all_courses';
-
-    // 1️⃣ Check if data is already in Redis
-    const cachedData = await redisClient.get(cacheKey);
-    if (cachedData) {
-      console.log("🚀 Serving from Cache");
-      return res.json(JSON.parse(cachedData)); // Serve cached data
-    }
-
-    // 2️⃣ If not in cache, fetch from MongoDB
+    // Fetch from MongoDB directly
     const courses = await Course.find({});
-
-    // 3️⃣ Store result in Redis (cache for 1 hour)
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(courses));
-
     console.log("📡 Serving from Database");
     res.json(courses);
   } catch (err) {
@@ -105,19 +89,9 @@ export const getCourses = async (req, res) => {
 export const getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
-    const cacheKey = `course_${id}`;
-    
-    const cachedCourse = await redisClient.get(cacheKey);
-    if (cachedCourse) {
-      console.log(`Cache hit for course ${id}`);
-      return res.json(JSON.parse(cachedCourse));
-    }
-
-    console.log(`Cache miss for course ${id}, fetching from DB`);
+    console.log(`Fetching course ${id} from DB`);
     const course = await Course.findById(id);
     if (!course) return res.status(404).json({ message: "Course not found" });
-
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(course));  // Cache for 1 hour
 
     res.json(course);
   } catch (err) {
@@ -125,6 +99,7 @@ export const getCourseById = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 // Admin: Update a course
@@ -318,19 +293,9 @@ export const giveReview = async (req, res) => {
 export const getCoursesByUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    const cacheKey = `enrolled_courses_${userId}`;
-
-    const cachedCourses = await redisClient.get(cacheKey);
-    if (cachedCourses) {
-      console.log(`Cache hit for user ${userId}`);
-      return res.json(JSON.parse(cachedCourses));
-    }
-
-    console.log(`Cache miss for user ${userId}, fetching from DB`);
+    console.log(`Fetching courses for user ${userId} from DB`);
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User Not Found" });
-
-    await redisClient.setEx(cacheKey, 1800, JSON.stringify(user.enrolledCourses)); // Cache for 30 min
 
     res.json({ courses: user.enrolledCourses });
   } catch (error) {
@@ -338,3 +303,4 @@ export const getCoursesByUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+

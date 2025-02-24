@@ -1,4 +1,4 @@
-import React from "react"; 
+import React from "react";
 import Navbar from "./components/Common/Navbar";
 import Footer from "./components/Common/Footer";
 import LandingPage from "./Pages/LandingPage";
@@ -18,7 +18,7 @@ import ProtectedRoute from "./components/Common/ProtectedRoutes";
 import QuizApp from "./Pages/Quiz/TakeQuiz";
 import EnrolledCourses from "./Pages/EnrolledCourse";
 import ChatbotPage from "./Pages/ChatBot";
-
+import LeaderBoard from "./Pages/LearderBoard/index";
 const App = () => {
   return (
     <Router>
@@ -38,28 +38,24 @@ const App = () => {
             <Route path="/admin/auth" element={<AdminAuth />} />
             <Route path="/takeQuiz/:id" element={<QuizApp />} />
             <Route path="/chatbot" element={<ChatbotPage />} />
+            <Route path="/leaderboard" element={<LeaderBoard id={"67b88f2743bae65b585bfed6"} />} />
             {/* Protected Admin Routes */}
-            <Route 
-              path="/admin/dashboard" 
-              element={
-                  <AdminDashboard />
-              } 
-            />
-            <Route 
-              path="/admin/createCourse" 
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route
+              path="/admin/createCourse"
               element={
                 <ProtectedRoute>
                   <CreateCourse />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/admin/:id/createQuiz" 
+            <Route
+              path="/admin/:id/createQuiz"
               element={
                 <ProtectedRoute>
                   <CreateQuiz />
                 </ProtectedRoute>
-              } 
+              }
             />
           </Routes>
           <Footer />
